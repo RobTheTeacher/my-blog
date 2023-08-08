@@ -1,29 +1,28 @@
 import Link from "next/link";
 import styles from "./blog.module.css";
 import Heading from "@components/heading";
+import useSWR from "swr";
+import useSWRMutation from "swr/mutation";
 
-const mockData = [
-  {
-    id: "123",
-    title: "Community-Messaging Fit",
-    slug: "community-messaging-fit",
-    createdAt: "2022-02-15",
-    body: "<p>This is a good community fit!</p>",
-  },
-  {
-    id: "1234",
-    title: "Why you should use a react framework",
-    slug: "why-you-should-use-react-framework",
-    createdAt: "2022-02-12",
-    body: "<p>This is a good community fit!</p>",
-  },
-];
+import { getPosts } from "../../api-routes/posts"
+
+export const cacheKey = "/api/blogs";
 
 export default function Blog() {
+  const { data: { data = [] } = {} } = useSWR(cacheKey, getPosts, {
+    onError: () => {
+      setToaster({
+        message: "Unable to fetch blogs, is your server up and running?",
+        type: "error",
+      });
+    },
+  });
+
   return (
     <section>
-      <Heading>Blog</Heading>
-      {mockData.map((post) => (
+      <Heading>Blogs</Heading>
+      {data?.map((post) => (
+        
         <Link
           key={post.slug}
           className={styles.link}
@@ -31,7 +30,9 @@ export default function Blog() {
         >
           <div className="w-full flex flex-col">
             <p>{post.title}</p>
-            <time className={styles.date}>{post.createdAt}</time>
+            <time className={styles.date}>{post.created_at}</time>
+            <p>Author: {post.author}</p>
+            {console.log(post.user_id)}
           </div>
         </Link>
       ))}
