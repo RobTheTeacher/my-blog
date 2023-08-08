@@ -6,7 +6,7 @@ import { useUser } from '@supabase/auth-helpers-react'
 export default function Comment({ comment, createdAt, author, id }) {
   const user = useUser();
   const handleDelete = () => {
-    console.log({ id });
+
   };
   return (
     <div className={styles.container}>
